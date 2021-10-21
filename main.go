@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	
+
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
 	 		resourceGroup, err := core.NewResourceGroup(ctx, "someResourceGroup", &core.ResourceGroupArgs{
 	 			Location: pulumi.String("West Europe"),

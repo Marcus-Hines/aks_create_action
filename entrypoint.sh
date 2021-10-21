@@ -34,15 +34,8 @@ if [ $INPUT_ACTION_TYPE = "destroy" ]; then
     pulumi destroy -force
 else
     echo "*******************"
-    echo "Running plan"
-    echo "*******************"
-
-    pulumi plan -no-color -out=tfplan -input=false
-
-    echo "*******************"
     echo "Running apply"
     echo "*******************"
-
     pulumi up
 fi
 
