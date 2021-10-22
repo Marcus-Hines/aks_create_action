@@ -36,7 +36,7 @@ else
     echo "*******************"
     echo "Running apply"
     echo "*******************"
-    pulumi up
+    
 fi
 
 
