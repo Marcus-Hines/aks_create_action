@@ -46,7 +46,6 @@ inputs:
   PULUMI_ACCESS_TOKEN:
     required: true
     description: 'create ACR with cluster name'
-
 runs:
   using: 'docker'
   image: 'Dockerfile'
