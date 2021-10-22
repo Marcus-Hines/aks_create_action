@@ -37,7 +37,7 @@ else
     echo "*******************"
     echo "Running apply"
     echo "*******************"
-    pulumi stack init
+    pulumi stack init dev
     pulumi up --yes
 fi
 
