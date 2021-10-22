@@ -20,11 +20,12 @@ echo "*******************"
 echo "Running init"
 echo "*******************"
 
-pulumi config set resource_group_name ${TF_VAR_resource_group_name}
-pulumi config set storage_account_name ${STORAGE_ACCOUNT_NAME}
-pulumi config set container_name ${STORAGE_CONTAINER_NAME}
-pulumi config set key ${TF_VAR_cluster_name}.tfstate
-pulumi config set access_key ${STORAGE_ACCESS_KEY}
+
+pulumi config set azure:clientId ${ARM_CLIENT_ID}
+pulumi config set azure:clientSecret ${ARM_CLIENT_SECRET} --secret
+pulumi config set azure:tenantId ${ARM_TENANT_ID}
+pulumi config set azure:subscriptionId ${ARM_SUBSCRIPTION_ID}
+
 
 if [ $INPUT_ACTION_TYPE = "destroy" ]; then
     echo "*******************"
@@ -33,15 +34,8 @@ if [ $INPUT_ACTION_TYPE = "destroy" ]; then
     pulumi destroy -force
 else
     echo "*******************"
-    echo "Running plan"
-    echo "*******************"
-
-    pulumi plan -no-color -out=tfplan -input=false
-
-    echo "*******************"
     echo "Running apply"
     echo "*******************"
-
     pulumi up
 fi
 
