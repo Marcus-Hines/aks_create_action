@@ -1,11 +1,9 @@
-#
 # Build stage
 #
 FROM golang:latest AS build
 
 COPY . /action
 
-#
 # Package stage
 #
 FROM pulumi/pulumi:latest
