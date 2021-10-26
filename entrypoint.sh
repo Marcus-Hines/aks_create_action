@@ -20,8 +20,8 @@ cd /action/$INPUT_CLUSTER_SIZE
 echo "*******************"
 echo "Running init"
 echo "*******************"
-
-
+go get github.com/pulumi/pulumi-docker/sdk/v3/go/...
+pulumi stack select dev --create
 pulumi config set azure:clientId ${ARM_CLIENT_ID}
 pulumi config set azure:clientSecret ${ARM_CLIENT_SECRET} --secret
 pulumi config set azure:tenantId ${ARM_TENANT_ID}
@@ -37,7 +37,6 @@ else
     echo "*******************"
     echo "Running apply"
     echo "*******************"
-    pulumi stack select dev --create
     pulumi up --yes
 fi
 

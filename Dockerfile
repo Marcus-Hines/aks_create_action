@@ -1,9 +1,7 @@
 
-# Package stage
-#
-FROM pulumi/pulumi:latest
+FROM pulumi/pulumi-go:latest
 
-COPY  . /action
+COPY . /action
 
 ENTRYPOINT ["/action/entrypoint.sh"]
 
