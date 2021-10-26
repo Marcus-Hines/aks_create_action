@@ -21,7 +21,7 @@ cd /action/$INPUT_CLUSTER_SIZE
 
 go version
 
-
+echo $PATH
 
 echo "*******************"
 echo "Running init"
