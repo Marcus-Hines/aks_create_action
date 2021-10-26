@@ -1,7 +1,7 @@
 
 # Package stage
 #
-FROM pulumi/pulumi:latest
+FROM pulumi/pulumi:3.16.0
 
 COPY  . /action
 
