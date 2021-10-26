@@ -14,18 +14,19 @@ export TF_VAR_cluster_name=$INPUT_CLUSTER_NAME
 export TF_VAR_create_acr=$INPUT_CREATE_ACR
 export TF_IN_AUTOMATION=true
 
-## Use Pulumi based on cluster size variable
+## Use Pulumi based on cluster size variable | /pulumi/bin/pulumi
 cd /action/$INPUT_CLUSTER_SIZE
 
 echo "*******************"
 echo "Running init"
 echo "*******************"
 
-pulumi stack select dev --create
-pulumi config set azure:clientId ${ARM_CLIENT_ID}
-pulumi config set azure:clientSecret ${ARM_CLIENT_SECRET} --secret
-pulumi config set azure:tenantId ${ARM_TENANT_ID}
-pulumi config set azure:subscriptionId ${ARM_SUBSCRIPTION_ID}
+
+/pulumi/bin/pulumi stack select dev --create
+/pulumi/bin/pulumi config set azure:clientId ${ARM_CLIENT_ID}
+/pulumi/bin/pulumi config set azure:clientSecret ${ARM_CLIENT_SECRET} --secret
+/pulumi/bin/pulumi config set azure:tenantId ${ARM_TENANT_ID}
+/pulumi/bin/pulumi config set azure:subscriptionId ${ARM_SUBSCRIPTION_ID}
 
 
 if [ $INPUT_ACTION_TYPE = "destroy" ]; then
@@ -37,7 +38,7 @@ else
     echo "*******************"
     echo "Running apply"
     echo "*******************"
-    pulumi up --yes
+    /pulumi/bin/pulumi up --yes
 fi
 
 
