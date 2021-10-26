@@ -20,7 +20,7 @@ cd /action/$INPUT_CLUSTER_SIZE
 echo "*******************"
 echo "Running init"
 echo "*******************"
-go get github.com/pulumi/pulumi-docker/sdk/v3/go/...
+
 pulumi stack select dev --create
 pulumi config set azure:clientId ${ARM_CLIENT_ID}
 pulumi config set azure:clientSecret ${ARM_CLIENT_SECRET} --secret
