@@ -17,6 +17,14 @@ export TF_IN_AUTOMATION=true
 ## Use Pulumi based on cluster size variable
 cd /action/$INPUT_CLUSTER_SIZE
 
+
+
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.17.2.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+go version
+
+
+
 echo "*******************"
 echo "Running init"
 echo "*******************"
