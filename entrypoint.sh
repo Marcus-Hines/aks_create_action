@@ -22,7 +22,7 @@ cd /action/$INPUT_CLUSTER_SIZE
 go version
 
 echo $PATH
-
+sudo  /root/.pulumi/bin/pulumi 
 echo "*******************"
 echo "Running init"
 echo "*******************"
