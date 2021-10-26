@@ -8,9 +8,9 @@ COPY . /action
 #
 # Package stage
 #
-FROM pulumi/pulumi-go:latest
+FROM pulumi/pulumi:latest
 
-COPY --from=build . /action
+COPY --from=build /action /action
 
 ENTRYPOINT ["/action/entrypoint.sh"]
 
