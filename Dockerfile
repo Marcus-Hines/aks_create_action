@@ -1,5 +1,4 @@
-
-FROM pulumi/pulumi:latest
+FROM pulumi/pulumi-go:latest
 
 COPY . /action
 
