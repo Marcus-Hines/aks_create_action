@@ -17,10 +17,6 @@ export TF_IN_AUTOMATION=true
 ## Use Pulumi based on cluster size variable
 cd /action/$INPUT_CLUSTER_SIZE
 
-apt-get install sudo -y
-sudo apt install curl
-
-curl -fsSL https://get.pulumi.com | sh
 echo "*******************"
 echo "Running init"
 echo "*******************"
