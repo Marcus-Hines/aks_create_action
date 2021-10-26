@@ -18,11 +18,7 @@ export TF_IN_AUTOMATION=true
 cd /action/$INPUT_CLUSTER_SIZE
 
 
-
-go version
-
-echo $PATH
-/root/.pulumi/bin/pulumi
+curl -fsSL https://get.pulumi.com | sh
 echo "*******************"
 echo "Running init"
 echo "*******************"
