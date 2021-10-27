@@ -9,7 +9,7 @@ import (
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
-	 		resourceGroup, err := core.NewResourceGroup(ctx, "someResourceGroup", &core.ResourceGroupArgs{
+	 		resourceGroup, err := core.NewResourceGroup(ctx, "akscreateactionrg", &core.ResourceGroupArgs{
 	 			Location: pulumi.String("West Europe"),
 	 		})
 
@@ -40,7 +40,7 @@ func main() {
 
 			ctx.Export("clientCertificate", exampleKubernetesCluster.KubeConfigs.ApplyT(func(kubeConfigs []containerservice.KubernetesClusterKubeConfig) (*string, error) {
 	 			return kubeConfigs[0].ClientCertificate, nil
-	 		}).(pulumi.StringOutput))
+	 		}).(pulumi.StringPtrOutput))
 			ctx.Export("kubeConfig", exampleKubernetesCluster.KubeConfigRaw)
 	 		return nil
 		})
