@@ -2,17 +2,16 @@ package main
 
 import (
 	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/containerservice"
-	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/core"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
-	 		
+
 			exampleKubernetesCluster, err := containerservice.NewKubernetesCluster(ctx, "mahinescluster", &containerservice.KubernetesClusterArgs{
-	 			Location:          "East US",
-				ResourceGroupName: "mahinesrg",
+	 			Location:          pulumi.StringPtrOutput.ToStringPtrOutput("East US"),
+				ResourceGroupName: pulumi.StringInput.ToStringOutput("mahinesrg"),
 	 			DnsPrefix:         pulumi.String("exampleaks1"),
 				DefaultNodePool: &containerservice.KubernetesClusterDefaultNodePoolArgs{
 	 				Name:      pulumi.String("default"),
