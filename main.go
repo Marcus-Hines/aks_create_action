@@ -9,16 +9,10 @@ import (
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
-	 		resourceGroup, err := core.NewResourceGroup(ctx, "mahinesrg", &core.ResourceGroupArgs{
-	 			Location: pulumi.String("eastus"),
-	 		})
-
-	 		if err != nil {
-	 			return err
-			}
+	 		
 			exampleKubernetesCluster, err := containerservice.NewKubernetesCluster(ctx, "mahinescluster", &containerservice.KubernetesClusterArgs{
-	 			Location:          resourceGroup.Location,
-				ResourceGroupName: resourceGroup.Name,
+	 			Location:          "East US",
+				ResourceGroupName: "mahinesrg",
 	 			DnsPrefix:         pulumi.String("exampleaks1"),
 				DefaultNodePool: &containerservice.KubernetesClusterDefaultNodePoolArgs{
 	 				Name:      pulumi.String("default"),
