@@ -9,9 +9,13 @@ func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
 
+			// resourceGroup, err := core.NewResourceGroup(ctx, "mahinescreaterg", &core.ResourceGroupArgs{
+			//	Location: pulumi.String("West Europe"),
+			//})
+
 			exampleKubernetesCluster, err := containerservice.NewKubernetesCluster(ctx, "mahinescluster", &containerservice.KubernetesClusterArgs{
-	 			Location:          pulumi.StringPtrOutput.ToStringPtrOutput("East US"),
-				ResourceGroupName: pulumi.StringInput.ToStringOutput("mahinesrg"),
+	 			Location:          pulumi.String("East US"),
+				ResourceGroupName: pulumi.String("mahinesrg"),
 	 			DnsPrefix:         pulumi.String("exampleaks1"),
 				DefaultNodePool: &containerservice.KubernetesClusterDefaultNodePoolArgs{
 	 				Name:      pulumi.String("default"),
