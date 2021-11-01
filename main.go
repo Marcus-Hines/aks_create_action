@@ -8,10 +8,18 @@ import (
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
+            fmt.Println("ARM_CLIENT_ID:", os.Getenv("ARM_CLIENT_ID"))
+            fmt.Println("ARM_SUBSCRIPTION_ID:", os.Getenv("ARM_SUBSCRIPTION_ID"))
 
-			// resourceGroup, err := core.NewResourceGroup(ctx, "mahinescreaterg", &core.ResourceGroupArgs{
-			//	Location: pulumi.String("West Europe"),
-			//})
+		   // export ARM_CLIENT_ID
+           // export ARM_CLIENT_SECRET
+           // export ARM_SUBSCRIPTION_ID
+           // export ARM_TENANT_ID
+           // export STORAGE_ACCOUNT_NAME
+           // export STORAGE_CONTAINER_NAME
+           // export STORAGE_ACCESS_KEY
+           // export PULUMI_ACCESS_TOKEN
+
 
 			exampleKubernetesCluster, err := containerservice.NewKubernetesCluster(ctx, "mahinescluster", &containerservice.KubernetesClusterArgs{
 	 			Location:          pulumi.String("East US"),
