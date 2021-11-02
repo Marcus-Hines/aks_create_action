@@ -3,30 +3,17 @@ package main
 import (
 	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/containerservice"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"fmt"
-     "os"
+	"os"
 )
 
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
-            fmt.Println("ARM_CLIENT_ID:", os.Getenv("ARM_CLIENT_ID"))
-            fmt.Println("ARM_SUBSCRIPTION_ID:", os.Getenv("ARM_SUBSCRIPTION_ID"))
 
-		   // export ARM_CLIENT_ID
-           // export ARM_CLIENT_SECRET
-           // export ARM_SUBSCRIPTION_ID
-           // export ARM_TENANT_ID
-           // export STORAGE_ACCOUNT_NAME
-           // export STORAGE_CONTAINER_NAME
-           // export STORAGE_ACCESS_KEY
-           // export PULUMI_ACCESS_TOKEN
-
-
-			exampleKubernetesCluster, err := containerservice.NewKubernetesCluster(ctx, "mahinescluster", &containerservice.KubernetesClusterArgs{
-	 			Location:          pulumi.String("East US"),
-				ResourceGroupName: pulumi.String("mahinesrg"),
-	 			DnsPrefix:         pulumi.String("exampleaks1"),
+			k8sCluster, err := containerservice.NewKubernetesCluster(ctx, getClusterName(), &containerservice.KubernetesClusterArgs{
+	 			Location:          pulumi.String(getLocation()),
+				ResourceGroupName: pulumi.String(getResourceGroup()),
+	 			DnsPrefix:         pulumi.String(getDnsPrefix()),
 				DefaultNodePool: &containerservice.KubernetesClusterDefaultNodePoolArgs{
 	 				Name:      pulumi.String("default"),
 					NodeCount: pulumi.Int(1),
@@ -36,7 +23,7 @@ func main() {
 	 				Type: pulumi.String("SystemAssigned"),
 				},
 	 			Tags: pulumi.StringMap{
-	 				"Environment": pulumi.String("Production"),
+	 				"Environment": pulumi.String("Dev"),
 	 			},
 	 		})
 	 		if err != nil {
@@ -44,11 +31,41 @@ func main() {
 	 		}
 
 
-			ctx.Export("clientCertificate", exampleKubernetesCluster.KubeConfigs.ApplyT(func(kubeConfigs []containerservice.KubernetesClusterKubeConfig) (*string, error) {
+			ctx.Export("clientCertificate", k8sCluster.KubeConfigs.ApplyT(func(kubeConfigs []containerservice.KubernetesClusterKubeConfig) (*string, error) {
 	 			return kubeConfigs[0].ClientCertificate, nil
 	 		}).(pulumi.StringPtrOutput))
-			ctx.Export("kubeConfig", exampleKubernetesCluster.KubeConfigRaw)
+			ctx.Export("kubeConfig", k8sCluster.KubeConfigRaw)
 	 		return nil
 		})
 	 }
 
+	 func getClusterName() string {
+	 	clusterName := os.Getenv("CLUSTER_NAME")
+
+	 	if clusterName == "" {
+	 		return "aks_create_cluster"
+		}
+		return clusterName
+	 }
+
+	 func getLocation() string {
+	 	location := os.Getenv("REGION")
+
+	 	if location == "" {
+	 		return "East US"
+		}
+		return location
+	 }
+
+	 func getResourceGroup() string {
+	 	resourceGroup := os.Getenv("RESOURCE_GROUP")
+
+	 	if resourceGroup == "" {
+	 		return "aks_create_rg"
+		}
+		return resourceGroup
+	 }
+
+	 func getDnsPrefix() string {
+	 	return "akscreate"
+	 }
