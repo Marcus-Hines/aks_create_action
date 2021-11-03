@@ -7,9 +7,9 @@ import (
 	"os"
 )
 
-const STORAGE_ACCOUNT_NAME = "aks_create_sa"
-const CLUSTER_NAME = "aks_create_cluster"
-const RESOURCE_GROUP_NAME = "aks_create_rg"
+const STORAGE_ACCOUNT_NAME = "akscreatesa"
+const CLUSTER_NAME = "akscreatecluster"
+const RESOURCE_GROUP_NAME = "akscreaterg"
 
 
 func main() {
