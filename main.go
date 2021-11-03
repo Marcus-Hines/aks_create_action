@@ -2,17 +2,36 @@ package main
 
 import (
 	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/containerservice"
+	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/storage"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"os"
 )
 
+const STORAGE_ACCOUNT_NAME = "aks_create_sa"
+const CLUSTER_NAME = "aks_create_cluster"
+const RESOURCE_GROUP_NAME = "aks_create_rg"
+
+
 func main() {
 
 	 	pulumi.Run(func(ctx *pulumi.Context) error {
+	 		location := getLocation()
+	 		resourceGroup := getResourceGroup()
+
+	 		// Create storage account
+			createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
+
+	 		// Get storage account key
+			//storageAccountKey, err := getStorageAccountKey()
+
+			// Create storage container
+			createStorageContainer(ctx)
+
+
 
 			k8sCluster, err := containerservice.NewKubernetesCluster(ctx, getClusterName(), &containerservice.KubernetesClusterArgs{
-	 			Location:          pulumi.String(getLocation()),
-				ResourceGroupName: pulumi.String(getResourceGroup()),
+	 			Location:          pulumi.String(location),
+				ResourceGroupName: pulumi.String(resourceGroup),
 	 			DnsPrefix:         pulumi.String(getDnsPrefix()),
 				DefaultNodePool: &containerservice.KubernetesClusterDefaultNodePoolArgs{
 	 				Name:      pulumi.String("default"),
@@ -43,7 +62,7 @@ func main() {
 	 	clusterName := os.Getenv("CLUSTER_NAME")
 
 	 	if clusterName == "" {
-	 		return "aks_create_cluster"
+	 		return CLUSTER_NAME
 		}
 		return clusterName
 	 }
@@ -58,14 +77,54 @@ func main() {
 	 }
 
 	 func getResourceGroup() string {
-	 	resourceGroup := os.Getenv("RESOURCE_GROUP")
+	 	resourceGroup := os.Getenv("RESOURCE_GROUP_NAME")
 
 	 	if resourceGroup == "" {
-	 		return "aks_create_rg"
+	 		return RESOURCE_GROUP_NAME
 		}
 		return resourceGroup
 	 }
 
 	 func getDnsPrefix() string {
 	 	return "akscreate"
+	 }
+
+	 func createStorageAccount(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput ) error {
+		 _, err := storage.NewAccount(ctx, STORAGE_ACCOUNT_NAME, &storage.AccountArgs{
+			 ResourceGroupName:      resourceGroup,
+			 Location:               location,
+			 AccountTier:            pulumi.String("Standard"),
+			 AccountReplicationType: pulumi.String("GRS"),
+			 Tags: pulumi.StringMap{
+				 "environment": pulumi.String("Dev"),
+			 },
+		 })
+		 if err != nil {
+			 return err
+		 }
+		 return nil
+	 }
+
+	 func getStorageAccountKey (ctx *pulumi.Context, location string, resourceGroup string ) (string, error) {
+		 storageAccount, err := storage.LookupAccount(ctx, &storage.LookupAccountArgs{
+			 Name:             STORAGE_ACCOUNT_NAME,
+			 ResourceGroupName: &resourceGroup,
+		 }, nil)
+
+		 if err != nil {
+			 return "", err
+		 }
+		 //ctx.Export("storageAccountTier", storageAccount.AccountTier)
+		 return storageAccount.PrimaryAccessKey,nil
+	 }
+
+	 func createStorageContainer(ctx *pulumi.Context) error {
+		 _, err := storage.NewContainer(ctx, "exampleContainer", &storage.ContainerArgs{
+			 StorageAccountName:  pulumi.String(STORAGE_ACCOUNT_NAME),
+			 ContainerAccessType: pulumi.String("private"),
+		 })
+		 if err != nil {
+			 return err
+		 }
+		 return nil
 	 }
