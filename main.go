@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/containerservice"
 	"github.com/pulumi/pulumi-azure/sdk/v4/go/azure/storage"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -19,13 +20,20 @@ func main() {
 	 		resourceGroup := getResourceGroup()
 
 	 		// Create storage account
-			createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
+			account, err := createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
+
+			if err != nil {
+				fmt.Print("error happened during storage account creation")
+				return err
+			}
+			// Print
+			fmt.Print(account.AccountKind)
 
 	 		// Get storage account key
 			//storageAccountKey, err := getStorageAccountKey()
 
 			// Create storage container
-			createStorageContainer(ctx)
+			//createStorageContainer(ctx)
 
 
 
@@ -89,8 +97,8 @@ func main() {
 	 	return "akscreate"
 	 }
 
-	 func createStorageAccount(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput ) error {
-		 _, err := storage.NewAccount(ctx, STORAGE_ACCOUNT_NAME, &storage.AccountArgs{
+	 func createStorageAccount(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput ) (*storage.Account, error) {
+		 account, err := storage.NewAccount(ctx, STORAGE_ACCOUNT_NAME, &storage.AccountArgs{
 			 ResourceGroupName:      resourceGroup,
 			 Location:               location,
 			 AccountTier:            pulumi.String("Standard"),
@@ -100,9 +108,9 @@ func main() {
 			 },
 		 })
 		 if err != nil {
-			 return err
+			 return nil, err
 		 }
-		 return nil
+		 return account, nil
 	 }
 
 	 func getStorageAccountKey (ctx *pulumi.Context, location string, resourceGroup string ) (string, error) {
