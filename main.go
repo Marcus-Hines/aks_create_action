@@ -20,7 +20,7 @@ func main() {
 	 		resourceGroup := getResourceGroup()
 
 	 		// Create storage account
-			_, err := createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
+			storageAccount, err := createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
 
 			if err != nil {
 				fmt.Print("error happened during storage account creation")
@@ -31,7 +31,7 @@ func main() {
 			//storageAccountKey, err := getStorageAccountKey()
 
 			// Create storage container
-			createStorageContainer(ctx)
+			createStorageContainer(ctx, storageAccount.Name)
 
 
 
@@ -124,9 +124,9 @@ func main() {
 		 return storageAccount.PrimaryAccessKey,nil
 	 }
 
-	 func createStorageContainer(ctx *pulumi.Context) error {
+	 func createStorageContainer(ctx *pulumi.Context, accountName pulumi.StringInput) error {
 		 _, err := storage.NewContainer(ctx, "mahinescontainer", &storage.ContainerArgs{
-			 StorageAccountName:  pulumi.String(STORAGE_ACCOUNT_NAME),
+			 StorageAccountName:  accountName,
 			 ContainerAccessType: pulumi.String("private"),
 		 })
 		 if err != nil {
@@ -134,3 +134,5 @@ func main() {
 		 }
 		 return nil
 	 }
+
+
