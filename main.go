@@ -22,17 +22,28 @@ func main() {
 
 	 		// Create storage account
 			storageAccount, err := createStorageAccount(ctx, pulumi.String(location), pulumi.String(resourceGroup))
-
 			if err != nil {
 				fmt.Print("error happened during storage account creation")
 				return err
 			}
 
 			// Create storage container
-			createStorageContainer(ctx, storageAccount.Name)
+			err = createStorageContainer(ctx, storageAccount.Name)
+			if err != nil {
+				fmt.Print("error happened during storage container creation")
+				return err
+			}
 
+			// Create ACR if needed
+			if isCreateACR() {
+				err = createACR(ctx, pulumi.String(location), pulumi.String(resourceGroup))
+				if err != nil {
+					fmt.Print("error happened during ACR creation")
+					return err
+				}
+			}
 
-
+			// Create K8's Cluster
 			k8sCluster, err := containerservice.NewKubernetesCluster(ctx, getClusterName(), &containerservice.KubernetesClusterArgs{
 	 			Location:          pulumi.String(location),
 				ResourceGroupName: pulumi.String(resourceGroup),
@@ -62,63 +73,99 @@ func main() {
 		})
 	 }
 
-	 func getClusterName() string {
-	 	clusterName := os.Getenv("CLUSTER_NAME")
 
-	 	if clusterName == "" {
-	 		return CLUSTER_NAME
-		}
-		return clusterName
+
+ // Helper functions
+
+ func getClusterName() string {
+	clusterName := os.Getenv("CLUSTER_NAME")
+
+	if clusterName == "" {
+		return CLUSTER_NAME
+	}
+	return clusterName
+ }
+
+ func getLocation() string {
+	location := os.Getenv("REGION")
+
+	if location == "" {
+		return "East US"
+	}
+	return location
+ }
+
+ func isCreateACR() bool {
+	isACR := os.Getenv("CREATE_ACR")
+	return isACR == "true"
+ }
+
+
+func getResourceGroup() string {
+	resourceGroup := os.Getenv("RESOURCE_GROUP_NAME")
+
+	if resourceGroup == "" {
+		return RESOURCE_GROUP_NAME
+	}
+	return resourceGroup
+ }
+
+ func getDnsPrefix() string {
+	return "akscreate"
+ }
+
+ func createStorageAccount(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput ) (*storage.Account, error) {
+	 account, err := storage.NewAccount(ctx, STORAGE_ACCOUNT_NAME, &storage.AccountArgs{
+		 ResourceGroupName:      resourceGroup,
+		 Location:               location,
+		 AccountTier:            pulumi.String("Standard"),
+		 AccountReplicationType: pulumi.String("GRS"),
+		 Tags: pulumi.StringMap{
+			 "environment": pulumi.String("Dev"),
+		 },
+	 })
+	 if err != nil {
+		 return nil, err
 	 }
+	 return account, nil
+ }
 
-	 func getLocation() string {
-	 	location := os.Getenv("REGION")
 
-	 	if location == "" {
-	 		return "East US"
-		}
-		return location
+ func createStorageContainer(ctx *pulumi.Context, accountName pulumi.StringInput) error {
+	 _, err := storage.NewContainer(ctx, CONTAINER_NAME, &storage.ContainerArgs{
+		 StorageAccountName:  accountName,
+		 ContainerAccessType: pulumi.String("private"),
+	 })
+	 if err != nil {
+		 return err
 	 }
+	 return nil
+ }
 
-	 func getResourceGroup() string {
-	 	resourceGroup := os.Getenv("RESOURCE_GROUP_NAME")
 
-	 	if resourceGroup == "" {
-	 		return RESOURCE_GROUP_NAME
-		}
-		return resourceGroup
-	 }
-
-	 func getDnsPrefix() string {
-	 	return "akscreate"
-	 }
-
-	 func createStorageAccount(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput ) (*storage.Account, error) {
-		 account, err := storage.NewAccount(ctx, STORAGE_ACCOUNT_NAME, &storage.AccountArgs{
-			 ResourceGroupName:      resourceGroup,
-			 Location:               location,
-			 AccountTier:            pulumi.String("Standard"),
-			 AccountReplicationType: pulumi.String("GRS"),
-			 Tags: pulumi.StringMap{
-				 "environment": pulumi.String("Dev"),
+ func createACR(ctx *pulumi.Context, location pulumi.StringInput, resourceGroup pulumi.StringInput) error {
+	 _, err := containerservice.NewRegistry(ctx, "akscreateacr", &containerservice.RegistryArgs{
+		 ResourceGroupName: resourceGroup,
+		 Location:          location,
+		 Sku:               pulumi.String("Premium"),
+		 AdminEnabled:      pulumi.Bool(false),
+		 Georeplications: containerservice.RegistryGeoreplicationArray{
+			 &containerservice.RegistryGeoreplicationArgs{
+				 Location:              location,
+				 ZoneRedundancyEnabled: pulumi.Bool(true),
+				 Tags:                  nil,
 			 },
-		 })
-		 if err != nil {
-			 return nil, err
-		 }
-		 return account, nil
+			 &containerservice.RegistryGeoreplicationArgs{
+				 Location:              pulumi.String("westeurope"),
+				 ZoneRedundancyEnabled: pulumi.Bool(true),
+				 Tags:                  nil,
+			 },
+		 },
+	 })
+	 if err != nil {
+		 return err
 	 }
-
-
-	 func createStorageContainer(ctx *pulumi.Context, accountName pulumi.StringInput) error {
-		 _, err := storage.NewContainer(ctx, CONTAINER_NAME, &storage.ContainerArgs{
-			 StorageAccountName:  accountName,
-			 ContainerAccessType: pulumi.String("private"),
-		 })
-		 if err != nil {
-			 return err
-		 }
-		 return nil
-	 }
+	 return nil
+ }
 
 
