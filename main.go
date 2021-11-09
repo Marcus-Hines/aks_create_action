@@ -151,11 +151,6 @@ func getResourceGroup() string {
 		 AdminEnabled:      pulumi.Bool(false),
 		 Georeplications: containerservice.RegistryGeoreplicationArray{
 			 &containerservice.RegistryGeoreplicationArgs{
-				 Location:              pulumi.String("West US"),
-				 ZoneRedundancyEnabled: pulumi.Bool(true),
-				 Tags:                  nil,
-			 },
-			 &containerservice.RegistryGeoreplicationArgs{
 				 Location:              pulumi.String("westeurope"),
 				 ZoneRedundancyEnabled: pulumi.Bool(true),
 				 Tags:                  nil,
