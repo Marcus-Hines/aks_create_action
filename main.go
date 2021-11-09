@@ -11,6 +11,7 @@ import (
 const STORAGE_ACCOUNT_NAME = "akscreatesa"
 const CLUSTER_NAME = "akscreatecluster"
 const RESOURCE_GROUP_NAME = "akscreaterg"
+const CONTAINER_NAME = "akscreatecontainer"
 
 
 func main() {
@@ -26,9 +27,6 @@ func main() {
 				fmt.Print("error happened during storage account creation")
 				return err
 			}
-
-	 		// Get storage account key
-			//storageAccountKey, err := getStorageAccountKey()
 
 			// Create storage container
 			createStorageContainer(ctx, storageAccount.Name)
@@ -111,21 +109,9 @@ func main() {
 		 return account, nil
 	 }
 
-	 func getStorageAccountKey (ctx *pulumi.Context, location string, resourceGroup string ) (string, error) {
-		 storageAccount, err := storage.LookupAccount(ctx, &storage.LookupAccountArgs{
-			 Name:             STORAGE_ACCOUNT_NAME,
-			 ResourceGroupName: &resourceGroup,
-		 }, nil)
-
-		 if err != nil {
-			 return "", err
-		 }
-		 //ctx.Export("storageAccountTier", storageAccount.AccountTier)
-		 return storageAccount.PrimaryAccessKey,nil
-	 }
 
 	 func createStorageContainer(ctx *pulumi.Context, accountName pulumi.StringInput) error {
-		 _, err := storage.NewContainer(ctx, "mahinescontainer", &storage.ContainerArgs{
+		 _, err := storage.NewContainer(ctx, CONTAINER_NAME, &storage.ContainerArgs{
 			 StorageAccountName:  accountName,
 			 ContainerAccessType: pulumi.String("private"),
 		 })
