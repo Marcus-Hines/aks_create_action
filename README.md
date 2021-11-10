@@ -60,5 +60,5 @@ with:
 ## References
 
 * https://docs.microsoft.com/en-us/azure/aks/kubernetes-action
-* https://wahlnetwork.com/2020/05/12/continuous-integration-with-github-actions-and-terraform/
+* https://www.pulumi.com/docs/
 * https://github.com/Azure/actions-workflow-samples/tree/master/Kubernetes
