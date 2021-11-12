@@ -58,7 +58,7 @@ with:
 ```
 
 ## References
-
+An example of this action being used can be viewed here: https://github.com/Marcus-Hines/workflow-dummy/runs/4143995914?check_suite_focus=true
 * https://docs.microsoft.com/en-us/azure/aks/kubernetes-action
 * https://www.pulumi.com/docs/
 * https://github.com/Azure/actions-workflow-samples/tree/master/Kubernetes
